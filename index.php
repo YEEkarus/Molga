@@ -1,4 +1,5 @@
 <?php
+
 interface ContentType
 {
     public function getName(): String;
@@ -6,7 +7,6 @@ interface ContentType
 
 interface Trader
 {
-    public function getProduct(): ContentType;
     public function getProducts(): array;
 }
 
@@ -108,29 +108,8 @@ class SwitchPlatform extends Platform
     }
 }
 
-class GameStudios implements ContentType
-{
-    public function getName(): String
-    {
-        return "Разработчики игр";
-    }
-}
-
-class FilmStudios implements ContentType
-{
-    public function getName(): String
-    {
-        return "Киностудии";
-    }
-}
-
 class TraderA implements Trader
 {
-    public function getProduct(): ContentType
-    {
-        return new RockstarGame();
-    }
-
     public function getProducts(): array
     {
         return [
@@ -143,17 +122,12 @@ class TraderA implements Trader
 
     public function getName(): String
     {
-        return 'Магазин фильмов' . "\n\n";
+        return 'Магазин игр' . PHP_EOL . PHP_EOL;
     }
 }
 
 class TraderB implements Trader
 {
-    public function getProduct(): ContentType
-    {
-        return new WarnerBrosFilms();
-    }
-
     public function getProducts(): array
     {
         return [
@@ -165,14 +139,17 @@ class TraderB implements Trader
 
     public function getName(): String
     {
-        return 'Магазин игр' . "\n\n";
+        return 'Магазин фильмов' . PHP_EOL . PHP_EOL;
     }
 }
 
-// An array of creators
-$traders = [ new TraderA(), new TraderB() ];
+# TraderA и TraderB реализуют фабрику Trader, а конкретно метод getProducts, что является полиморфизмом
+# Объявление полей и методов в классах является инкапсуляцией
+# Классы Game и Film наследуются от класса Content, это наследование. Так же в них используется констркутор объектов для инициализации полей
+# Паттер Singleton реализуется классами SwitchPlatform и WindowsPlatform, а конкретно WindowsPlatform::getInstance() всегда вернет один  и тот же объект класса WindowsPlatform
+$traders = [new TraderA(), new TraderB()];
 
-// Iterate over creators and create products
+# По каждому трейдеру получаем список продуктов которые они продает
 foreach ($traders as $trader) {
     if (!empty($trader->getProducts()) && is_array($trader->getProducts())) {
         echo $trader->getName();
